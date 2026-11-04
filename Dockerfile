@@ -8,13 +8,16 @@ FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /app
 
-# Copy pom.xml and cache dependencies first
+# Copy Maven settings (with Google Maven Central mirror to bypass 429 rate limits)
+COPY .mvn ./.mvn
 COPY pom.xml .
-RUN mvn dependency:go-offline -B || true
+
+# Pre-fetch dependencies via mirror
+RUN mvn dependency:go-offline -s .mvn/settings.xml -B || true
 
 # Copy source code and build production artifact
 COPY src ./src
-RUN mvn clean package -DskipTests -B
+RUN mvn clean package -s .mvn/settings.xml -DskipTests -B
 
 # Stage 2: Minimal Production JRE Runtime
 FROM eclipse-temurin:21-jre-alpine
