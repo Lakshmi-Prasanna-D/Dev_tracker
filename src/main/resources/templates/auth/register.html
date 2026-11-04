@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - DevTrack Platform</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+                        #0b0f19;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
+        }
+        .auth-card {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 40px rgba(99, 102, 241, 0.15);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+        }
+        .auth-header {
+            padding: 2.25rem 2.25rem 1rem;
+            text-align: center;
+        }
+        .auth-body {
+            padding: 1rem 2.25rem 2.25rem;
+        }
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            margin-bottom: 0.75rem;
+        }
+        .form-control {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 0.9rem;
+            border-radius: 0.6rem;
+            font-size: 0.92rem;
+        }
+        .form-control:focus {
+            background-color: #1e293b;
+            border-color: #6366f1;
+            color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+        .btn-auth-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 0.6rem;
+            transition: all 0.2s;
+        }
+        .btn-auth-primary:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="brand-icon">
+            <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <h3 class="fw-bold mb-1 text-white">Join DevTrack</h3>
+        <p class="text-secondary small mb-0">Create your isolated developer workspace</p>
+    </div>
+
+    <div class="auth-body">
+        <!-- Error alert -->
+        <div th:if="${errorMessage}" class="alert alert-danger py-2 px-3 small d-flex align-items-center gap-2 mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${errorMessage}">Registration error.</span>
+        </div>
+
+        <form th:action="@{/register}" th:object="${userDto}" method="post">
+            <div class="mb-3">
+                <label class="form-label small text-secondary fw-semibold">Full Name</label>
+                <input type="text" th:field="*{fullName}" class="form-control" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''" placeholder="e.g. Linus Torvalds" required autofocus>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Invalid name</div>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label small text-secondary fw-semibold">Username</label>
+                    <input type="text" th:field="*{username}" class="form-control" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" placeholder="e.g. linus" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Invalid username</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-secondary fw-semibold">Email Address</label>
+                    <input type="email" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" placeholder="name@domain.com" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Invalid email</div>
+                </div>
+            </div>
+
+            <div class="row g-2 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label small text-secondary fw-semibold">Password</label>
+                    <input type="password" th:field="*{password}" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" placeholder="Min. 6 characters" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Invalid password</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-secondary fw-semibold">Confirm Password</label>
+                    <input type="password" th:field="*{confirmPassword}" class="form-control" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''" placeholder="Repeat password" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Passwords do not match</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-auth-primary w-100 mb-3">
+                <i class="bi bi-check2-circle me-1"></i> Create Developer Account
+            </button>
+        </form>
+
+        <div class="text-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+            <span class="text-secondary small">Already have an account?</span>
+            <a href="/login" class="small text-primary text-decoration-none fw-semibold ms-1">Sign in here &rarr;</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Maven target directory
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE configurations
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# System & temporary logs
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Environment & credentials
+.env
+.env.local
+scratch/
+mysql-data/

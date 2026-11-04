@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Analytics')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('analytics')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Productivity Analytics')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <div>
+                    <h3 class="fw-bold mb-1">Developer Growth Analytics</h3>
+                    <p class="text-muted mb-0">Dynamic performance metrics powered by real database activity records.</p>
+                </div>
+                <div>
+                    <a href="/streaks" class="btn btn-outline-warning btn-sm text-dark"><i class="bi bi-fire text-warning me-1"></i>Streak Heatmap</a>
+                    <a href="/activities" class="btn btn-outline-secondary btn-sm"><i class="bi bi-clock-history me-1"></i>Full Audit Log</a>
+                </div>
+            </div>
+
+            <!-- Summary KPI Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Goal Success Rate</div>
+                        <div class="stat-value text-primary">
+                            <span th:text="${analytics.goalCompletionPercentage}">0</span>%
+                        </div>
+                        <div class="stat-meta text-muted" th:text="${analytics.completedGoals} + ' of ' + ${analytics.totalGoals} + ' goals completed'">0/0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">DSA Solved</div>
+                        <div class="stat-value text-success">
+                            <span th:text="${analytics.solvedDsaProblems}">0</span>
+                        </div>
+                        <div class="stat-meta text-muted" th:text="'out of ' + ${analytics.totalDsaProblems} + ' logged'">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Completed Projects</div>
+                        <div class="stat-value text-info">
+                            <span th:text="${analytics.completedProjects}">0</span>
+                        </div>
+                        <div class="stat-meta text-muted" th:text="'out of ' + ${analytics.totalProjects} + ' total projects'">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Database Integration</div>
+                        <div class="stat-value text-dark fs-4">Active</div>
+                        <div class="stat-meta text-success"><i class="bi bi-check-circle-fill me-1"></i>Live MySQL 8</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1: Goals & DSA Over Time -->
+            <div class="row g-4 mb-4">
+                <!-- 1. Goal Completion Percentage -->
+                <div class="col-12 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-bullseye me-2 text-primary"></i>1. Goal Completion Ratio
+                        </div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <div style="height: 220px;">
+                                <canvas id="goalCompletionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DSA Problems Solved Over Time -->
+                <div class="col-12 col-lg-8">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-graph-up me-2 text-primary"></i>2. DSA Problems Solved Over Time (Last 14 Days)
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 220px;">
+                                <canvas id="dsaTimelineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2: DSA Topic & Difficulty Distribution -->
+            <div class="row g-4 mb-4">
+                <!-- 3. Topic-wise DSA Distribution -->
+                <div class="col-12 col-lg-8">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-bar-chart-steps me-2 text-info"></i>3. Topic-Wise DSA Distribution
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 260px;">
+                                <canvas id="topicChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Difficulty-wise Distribution -->
+                <div class="col-12 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-pie-chart-fill me-2 text-warning"></i>4. Difficulty Distribution
+                        </div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <div style="height: 220px;">
+                                <canvas id="difficultyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 3: Weekly & Monthly Productivity -->
+            <div class="row g-4 mb-4">
+                <!-- 5. Weekly Productivity -->
+                <div class="col-12 col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-calendar-week me-2 text-primary"></i>5. Weekly Productivity (Last 7 Days)
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 220px;">
+                                <canvas id="analyticsWeeklyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Monthly Productivity -->
+                <div class="col-12 col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-calendar-month me-2 text-success"></i>6. Monthly Productivity (Last 6 Months)
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 220px;">
+                                <canvas id="analyticsMonthlyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 4: Project Completion Stats & Daily Activity Visualization -->
+            <div class="row g-4">
+                <!-- 7. Project Completion Statistics -->
+                <div class="col-12 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-kanban me-2 text-primary"></i>7. Project Status Overview
+                        </div>
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <div style="height: 220px;">
+                                <canvas id="projectStatusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Daily Activity Visualization -->
+                <div class="col-12 col-lg-8">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-activity me-2 text-success"></i>8. Daily Activity Frequency Trend
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 220px;">
+                                <canvas id="dailyActivityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+    <script th:src="@{/js/analytics-charts.js}"></script>
+</body>
+</html>

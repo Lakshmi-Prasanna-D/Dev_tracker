@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('404 Page Not Found')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('dashboard')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('404 Not Found')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <div class="row justify-content-center py-5">
+                <div class="col-12 col-md-8 col-lg-6 text-center">
+                    <div class="display-1 fw-bold text-primary mb-2">404</div>
+                    <h3 class="fw-bold mb-3" th:text="${errorTitle != null ? errorTitle : 'Page Not Found'}">Page Not Found</h3>
+                    <p class="text-muted mb-4" th:text="${errorMessage != null ? errorMessage : 'The resource you requested could not be located. It might have been deleted or moved.'}">
+                        The requested URL could not be found on this server.
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="/dashboard" class="btn btn-primary"><i class="bi bi-speedometer2 me-1"></i>Return to Dashboard</a>
+                        <a href="/goals" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Browse Goals</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

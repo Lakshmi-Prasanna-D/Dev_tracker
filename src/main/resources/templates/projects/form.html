@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Software Project')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('projects')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Software Project')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1" th:text="${isEdit ? 'Edit Project' : 'Create New Software Project'}">Project</h3>
+                            <p class="text-muted mb-0">Track development milestones, repositories, and delivery timelines.</p>
+                        </div>
+                        <a href="/projects" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back to Projects</a>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <form th:action="${isEdit ? '/projects/edit/' + project.id : '/projects'}" th:object="${project}" method="post">
+
+                                <!-- Project Name -->
+                                <div class="mb-3">
+                                    <label for="projectName" class="form-label fw-semibold">Project Name <span class="text-danger">*</span></label>
+                                    <input type="text" id="projectName" th:field="*{projectName}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('projectName')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., DevTrack - Developer Growth Platform">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('projectName')}" th:errors="*{projectName}">Project name is required</div>
+                                </div>
+
+                                <!-- Technologies -->
+                                <div class="mb-3">
+                                    <label for="technologies" class="form-label fw-semibold">Technologies Used</label>
+                                    <input type="text" id="technologies" th:field="*{technologies}" class="form-control"
+                                           placeholder="Comma-separated: Java 21, Spring Boot, MySQL, Thymeleaf, Docker">
+                                    <div class="form-text">List the primary tech stack and tools used.</div>
+                                </div>
+
+                                <!-- Status & Progress -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label for="status" class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                                        <select id="status" th:field="*{status}" class="form-select">
+                                            <option th:each="st : ${statuses}" th:value="${st}" th:text="${st.displayName}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="progressPercentage" class="form-label fw-semibold">Progress Percentage (0-100%)</label>
+                                        <input type="number" id="progressPercentage" th:field="*{progressPercentage}" class="form-control"
+                                               min="0" max="100" placeholder="0">
+                                    </div>
+                                </div>
+
+                                <!-- Start Date & Expected Completion Date -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label for="startDate" class="form-label fw-semibold">Start Date</label>
+                                        <input type="date" id="startDate" th:field="*{startDate}" class="form-control">
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="expectedCompletionDate" class="form-label fw-semibold">Expected Completion Date</label>
+                                        <input type="date" id="expectedCompletionDate" th:field="*{expectedCompletionDate}" class="form-control">
+                                    </div>
+                                </div>
+
+                                <!-- GitHub URL & Live Deployment URL -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label for="githubUrl" class="form-label fw-semibold">GitHub Repository URL</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-github"></i></span>
+                                            <input type="url" id="githubUrl" th:field="*{githubUrl}" class="form-control"
+                                                   placeholder="https://github.com/username/project">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="deploymentUrl" class="form-label fw-semibold">Live Deployment URL</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-box-arrow-up-right"></i></span>
+                                            <input type="url" id="deploymentUrl" th:field="*{deploymentUrl}" class="form-control"
+                                                   placeholder="https://my-app.vercel.app or http://localhost:8085">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-4">
+                                    <label for="description" class="form-label fw-semibold">Project Description</label>
+                                    <textarea id="description" th:field="*{description}" class="form-control" rows="4"
+                                              placeholder="Explain the architecture, design choices, business logic, and deliverables of this project..."></textarea>
+                                </div>
+
+                                <!-- Submit Buttons -->
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="/projects" class="btn btn-outline-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary px-4" th:text="${isEdit ? 'Save Changes' : 'Create Project'}">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

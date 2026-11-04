@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title != null ? title + ' - DevTrack' : 'DevTrack – Developer Growth Platform'}">DevTrack</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+</head>
+<body>
+
+<!-- Sidebar Fragment -->
+<div th:fragment="sidebar(activeNav)" class="sidebar">
+    <a href="/dashboard" class="sidebar-brand">
+        <i class="bi bi-cpu-fill text-primary" style="font-size: 1.6rem;"></i>
+        <span>DevTrack</span>
+    </a>
+
+    <ul class="sidebar-nav">
+        <li class="nav-category">Core</li>
+        <li>
+            <a href="/dashboard" class="sidebar-link" th:classappend="${activeNav == 'dashboard'} ? 'active' : ''">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li class="nav-category">Productivity & Growth</li>
+        <li>
+            <a href="/goals" class="sidebar-link" th:classappend="${activeNav == 'goals'} ? 'active' : ''">
+                <i class="bi bi-bullseye"></i>
+                <span>Goals</span>
+            </a>
+        </li>
+        <li>
+            <a href="/dsa" class="sidebar-link" th:classappend="${activeNav == 'dsa'} ? 'active' : ''">
+                <i class="bi bi-code-slash"></i>
+                <span>DSA Tracker</span>
+            </a>
+        </li>
+        <li>
+            <a href="/projects" class="sidebar-link" th:classappend="${activeNav == 'projects'} ? 'active' : ''">
+                <i class="bi bi-kanban"></i>
+                <span>Projects</span>
+            </a>
+        </li>
+        <li>
+            <a href="/reminders" class="sidebar-link" th:classappend="${activeNav == 'reminders'} ? 'active' : ''">
+                <i class="bi bi-alarm"></i>
+                <span>Reminders</span>
+            </a>
+        </li>
+
+        <li class="nav-category">Insights & History</li>
+        <li>
+            <a href="/analytics" class="sidebar-link" th:classappend="${activeNav == 'analytics'} ? 'active' : ''">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>Analytics</span>
+            </a>
+        </li>
+        <li>
+            <a href="/streaks" class="sidebar-link" th:classappend="${activeNav == 'streaks'} ? 'active' : ''">
+                <i class="bi bi-fire text-warning"></i>
+                <span>Streaks</span>
+            </a>
+        </li>
+        <li>
+            <a href="/calendar" class="sidebar-link" th:classappend="${activeNav == 'calendar'} ? 'active' : ''">
+                <i class="bi bi-calendar3"></i>
+                <span>Calendar</span>
+            </a>
+        </li>
+        <li>
+            <a href="/activities" class="sidebar-link" th:classappend="${activeNav == 'activities'} ? 'active' : ''">
+                <i class="bi bi-clock-history"></i>
+                <span>Activity Log</span>
+            </a>
+        </li>
+
+        <li class="nav-category">System</li>
+        <li>
+            <a href="/settings" class="sidebar-link" th:classappend="${activeNav == 'settings'} ? 'active' : ''">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2 text-truncate">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; font-weight: 600; font-size: 0.85rem;"
+                     th:text="${#authentication != null ? #strings.toUpperCase(#strings.substring(#authentication.name, 0, 1)) : 'D'}">
+                    D
+                </div>
+                <div class="text-truncate">
+                    <div class="text-white small fw-bold" th:text="${#authentication != null ? #authentication.name : 'Developer'}">Developer</div>
+                    <div class="text-muted" style="font-size: 0.72rem;">Logged in</div>
+                </div>
+            </div>
+            <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                <button type="submit" class="btn btn-sm btn-outline-secondary border-0 text-white-50 p-1" title="Sign Out">
+                    <i class="bi bi-box-arrow-right fs-5"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Top Navbar Fragment -->
+<nav th:fragment="navbar(pageTitle)" class="top-navbar">
+    <div class="d-flex align-items-center gap-3">
+        <button id="sidebarToggleBtn" class="btn btn-sm btn-outline-secondary d-lg-none" type="button">
+            <i class="bi bi-list fs-5"></i>
+        </button>
+        <h4 class="mb-0 fw-bold text-dark" th:text="${pageTitle != null ? pageTitle : 'Dashboard'}">Dashboard</h4>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="dropdown">
+            <button class="btn btn-primary btn-sm d-flex align-items-center gap-2 shadow-sm" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-plus-lg"></i>
+                <span class="d-none d-sm-inline">Quick Action</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                <li><a class="dropdown-item py-2" href="/goals/new"><i class="bi bi-bullseye text-primary me-2"></i>New Goal</a></li>
+                <li><a class="dropdown-item py-2" href="/dsa/new"><i class="bi bi-code-slash text-success me-2"></i>Log DSA Problem</a></li>
+                <li><a class="dropdown-item py-2" href="/projects/new"><i class="bi bi-folder-plus text-info me-2"></i>New Project</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item py-2" href="/reminders/new"><i class="bi bi-alarm text-warning me-2"></i>Set Reminder</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <button class="btn btn-light btn-sm border d-flex align-items-center gap-2 px-2 py-1 shadow-sm" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle fs-5 text-primary"></i>
+                <span class="small fw-semibold d-none d-md-inline" th:text="${#authentication != null ? #authentication.name : 'Account'}">Account</span>
+                <i class="bi bi-chevron-down small text-muted"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="min-width: 180px;">
+                <li class="px-3 py-2 border-bottom">
+                    <div class="small fw-bold text-dark" th:text="${#authentication != null ? #authentication.name : 'User'}">User</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">Signed in</div>
+                </li>
+                <li><a class="dropdown-item py-2" href="/settings"><i class="bi bi-gear me-2 text-muted"></i>Settings</a></li>
+                <li><hr class="dropdown-divider my-1"></li>
+                <li>
+                    <form th:action="@{/logout}" method="post" class="px-2 py-1">
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-box-arrow-right"></i> Sign Out
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Alert Banner Fragment -->
+<div th:fragment="alerts">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-check-circle-fill fs-5"></i>
+        <div th:text="${successMessage}">Success message</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+        <div th:text="${errorMessage}">Error message</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="py-3 px-4 bg-white border-top text-center text-muted small">
+    <div class="d-flex justify-content-between align-items-center">
+        <span>DevTrack Platform &copy; 2026. Built with Spring Boot 4.1.2 &amp; MySQL.</span>
+        <span>Port: <strong>8085</strong></span>
+    </div>
+</footer>
+
+<!-- Scripts Fragment -->
+<div th:fragment="scripts">
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <!-- Custom Main JS -->
+    <script th:src="@{/js/main.js}"></script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Reminders')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('reminders')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Reminder Management')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <!-- Header & Action -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <div>
+                    <h3 class="fw-bold mb-1">Reminder Management</h3>
+                    <p class="text-muted mb-0">Never miss a learning milestone, mock interview, or project sprint deadline.</p>
+                </div>
+                <div>
+                    <a href="/reminders/new" class="btn btn-warning text-dark fw-medium d-flex align-items-center gap-2">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Set New Reminder</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alert for Overdue Reminders if any -->
+            <div th:if="${not #lists.isEmpty(overdueReminders)}" class="alert alert-danger d-flex align-items-center gap-3 mb-4">
+                <i class="bi bi-exclamation-octagon-fill fs-4"></i>
+                <div>
+                    <strong>You have overdue reminders!</strong>
+                    <span th:text="${#lists.size(overdueReminders)} + ' task(s) missed their scheduled deadline.'">0 tasks</span>
+                </div>
+            </div>
+
+            <!-- Reminders List Card -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="fw-bold"><i class="bi bi-alarm me-2 text-warning"></i>All Scheduled Reminders</div>
+                    <span class="badge bg-light text-dark border" th:text="${pendingCount} + ' Pending'">0 Pending</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%;">Reminder</th>
+                                    <th>Due Date &amp; Time</th>
+                                    <th>Associated Entity</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(reminders)}">
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-alarm fs-1 d-block mb-2 text-secondary"></i>
+                                        No reminders scheduled. Create a reminder to stay on track!
+                                    </td>
+                                </tr>
+                                <tr th:each="r : ${reminders}">
+                                    <td>
+                                        <div class="fw-bold text-dark" th:text="${r.title}">Reminder Title</div>
+                                        <div th:if="${r.message != null and !#strings.isEmpty(r.message)}"
+                                             class="text-muted small text-truncate" style="max-width: 360px;" th:text="${r.message}">Message</div>
+                                    </td>
+                                    <td>
+                                        <div th:text="${#temporals.format(r.dueDateTime, 'MMM dd, yyyy &bull; hh:mm a')}">Date</div>
+                                        <span th:if="${r.overdue}" class="badge bg-danger small">Overdue</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${r.goal != null}" class="badge bg-primary bg-opacity-10 text-primary">
+                                            <i class="bi bi-bullseye me-1"></i>Goal: <span th:text="${r.goal.title}">Goal</span>
+                                        </span>
+                                        <span th:if="${r.project != null}" class="badge bg-info bg-opacity-10 text-info">
+                                            <i class="bi bi-folder me-1"></i>Project: <span th:text="${r.project.projectName}">Project</span>
+                                        </span>
+                                        <span th:if="${r.goal == null and r.project == null}" class="text-muted small">General Reminder</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" th:classappend="'bg-' + ${r.status.badgeClass}" th:text="${r.status.displayName}">Status</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-1 align-items-center">
+                                            <!-- Mark Done -->
+                                            <form th:if="${r.status == T(com.devtrack.devtrack.enums.ReminderStatus).PENDING}"
+                                                  th:action="@{'/reminders/complete/' + ${r.id}}" method="post">
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Mark Completed">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Dismiss -->
+                                            <form th:if="${r.status == T(com.devtrack.devtrack.enums.ReminderStatus).PENDING}"
+                                                  th:action="@{'/reminders/dismiss/' + ${r.id}}" method="post">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary" title="Dismiss">
+                                                    <i class="bi bi-bell-slash"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Edit -->
+                                            <a th:href="@{'/reminders/edit/' + ${r.id}}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+                                            <!-- Delete -->
+                                            <form th:action="@{'/reminders/delete/' + ${r.id}}" method="post"
+                                                  onsubmit="return confirm('Delete this reminder?');">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

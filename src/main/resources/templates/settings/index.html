@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Settings')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('settings')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Settings & Diagnostics')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <!-- Header -->
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">Platform Settings &amp; Diagnostics</h3>
+                <p class="text-muted mb-0">System configuration, database connections, and test data management.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- System Info -->
+                <div class="col-12 col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-info-circle me-2 text-primary"></i>Runtime &amp; Tech Stack Diagnostics
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Application Name</span>
+                                    <strong>DevTrack Platform</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Framework</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success">Spring Boot 4.1.2</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Java Runtime</span>
+                                    <strong th:text="${javaVersion}">Java 21/22</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Database Engine</span>
+                                    <span class="badge bg-info bg-opacity-10 text-info">MySQL 8.0</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Server Port</span>
+                                    <strong th:text="${activePort}">8085</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Operating System</span>
+                                    <span th:text="${osName}">Windows</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">ORM &amp; Persistence</span>
+                                    <span>Hibernate 6 / Spring Data JPA</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">UI Templates</span>
+                                    <span>Thymeleaf + Bootstrap 5 + Chart.js</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Metrics & Demo Seed -->
+                <div class="col-12 col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold">
+                            <i class="bi bi-database me-2 text-info"></i>Database Records Count
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3 text-center">
+                                <div class="col-4">
+                                    <div class="p-2 border rounded">
+                                        <div class="fs-4 fw-bold text-primary" th:text="${totalGoals}">0</div>
+                                        <div class="small text-muted">Goals</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 border rounded">
+                                        <div class="fs-4 fw-bold text-success" th:text="${totalDsa}">0</div>
+                                        <div class="small text-muted">DSA Problems</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 border rounded">
+                                        <div class="fs-4 fw-bold text-info" th:text="${totalProjects}">0</div>
+                                        <div class="small text-muted">Projects</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 border rounded">
+                                        <div class="fs-4 fw-bold text-warning" th:text="${totalReminders}">0</div>
+                                        <div class="small text-muted">Reminders</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 border rounded">
+                                        <div class="fs-4 fw-bold text-secondary" th:text="${totalActivities}">0</div>
+                                        <div class="small text-muted">Activity Logs</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Data Controls -->
+                    <div class="card border-warning border-opacity-25">
+                        <div class="card-header bg-warning bg-opacity-10 fw-bold text-dark">
+                            <i class="bi bi-arrow-repeat me-2 text-warning"></i>Sample Data Management
+                        </div>
+                        <div class="card-body">
+                            <p class="small text-muted mb-3">
+                                Need realistic demo data to show in a placement interview? This will refresh your database with curated learning goals, DSA problems across LeetCode topics, software projects with milestones, and a verified active streak!
+                            </p>
+                            <form th:action="@{/settings/reseed}" method="post"
+                                  onsubmit="return confirm('This will re-initialize sample goals, DSA problems, projects, and activities. Continue?');">
+                                <button type="submit" class="btn btn-warning text-dark fw-medium w-100">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Reset &amp; Populate Demo Data
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

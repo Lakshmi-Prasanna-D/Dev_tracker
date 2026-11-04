@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Activity History')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('activities')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Activity History')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <div>
+                    <h3 class="fw-bold mb-1">Developer Activity History</h3>
+                    <p class="text-muted mb-0">Automatic, tamper-proof audit trail of goals, problems solved, and project deliverables.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/streaks" class="btn btn-outline-warning btn-sm text-dark"><i class="bi bi-fire text-warning me-1"></i>View Streaks</a>
+                    <a href="/calendar" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar3 me-1"></i>Calendar View</a>
+                </div>
+            </div>
+
+            <!-- Filter by Activity Type -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form th:action="@{/activities}" method="get" class="row g-2 align-items-center">
+                        <div class="col-12 col-md-8">
+                            <select name="type" class="form-select" onchange="this.form.submit()">
+                                <option value="">All Activity Types</option>
+                                <option th:each="t : ${activityTypes}" th:value="${t}" th:text="${t.displayName}" th:selected="${t == selectedType}"></option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4 d-flex justify-content-md-end gap-2">
+                            <span class="badge bg-light text-muted border p-2">
+                                Total Activities: <strong class="text-dark" th:text="${totalActivities}">0</strong>
+                            </span>
+                            <a th:if="${selectedType != null}" href="/activities" class="btn btn-sm btn-outline-secondary">Clear Filter</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Timeline Card -->
+            <div class="card">
+                <div class="card-body p-4">
+                    <div th:if="${#lists.isEmpty(activities)}" class="text-center py-5 text-muted">
+                        <i class="bi bi-clock-history fs-1 d-block mb-2 text-secondary"></i>
+                        No activities recorded yet. Complete a learning goal, solve a problem, or update a project to start logging!
+                    </div>
+
+                    <div th:unless="${#lists.isEmpty(activities)}" class="timeline">
+                        <div th:each="act : ${activities}" class="timeline-item">
+                            <div class="timeline-icon" th:classappend="'bg-' + ${act.activityType.colorClass}">
+                                <i class="bi" th:classappend="${act.activityType.iconClass}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="badge" th:classappend="'bg-' + ${act.activityType.colorClass} + ' bg-opacity-10 text-' + ${act.activityType.colorClass}"
+                                          th:text="${act.activityType.displayName}">Type</span>
+                                    <span class="text-muted small">
+                                        <i class="bi bi-clock me-1"></i>
+                                        <span th:text="${#temporals.format(act.timestamp, 'EEE, MMM dd, yyyy &bull; hh:mm a')}">Timestamp</span>
+                                    </span>
+                                </div>
+                                <div class="fw-semibold text-dark mt-1" th:text="${act.description}">Activity Description</div>
+                                <div class="text-muted small mt-1">
+                                    Reference: <code class="text-secondary" th:text="${act.referenceType} + ' #' + ${act.referenceId}">REF #1</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

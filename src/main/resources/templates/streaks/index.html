@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Coding Streaks')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('streaks')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Coding Streaks')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <div>
+                    <h3 class="fw-bold mb-1">Coding Streaks &amp; Consistency</h3>
+                    <p class="text-muted mb-0">Build daily habits. Track your consecutive active days computed dynamically from database events.</p>
+                </div>
+                <div>
+                    <a href="/activities" class="btn btn-outline-secondary btn-sm"><i class="bi bi-clock-history me-1"></i>Activity History</a>
+                </div>
+            </div>
+
+            <!-- 3 Core Streak Metrics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-4">
+                    <div class="stat-card border-warning border-opacity-25 bg-gradient">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-title text-warning fw-bold">Current Streak</div>
+                                <div class="stat-value text-dark d-flex align-items-baseline gap-2">
+                                    <span th:text="${stats.currentStreak}">0</span>
+                                    <span class="fs-6 text-muted fw-normal">days</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon-wrapper bg-warning text-white shadow-sm">
+                                <i class="bi bi-fire fs-3"></i>
+                            </div>
+                        </div>
+                        <div class="stat-meta mt-2">
+                            <span th:if="${stats.activeToday}" class="badge bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-check-circle-fill me-1"></i>Active Today! Streak Preserved
+                            </span>
+                            <span th:unless="${stats.activeToday}" class="badge bg-warning bg-opacity-10 text-warning">
+                                <i class="bi bi-hourglass-split me-1"></i>Complete a task today to keep the streak!
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-title">Longest Streak</div>
+                                <div class="stat-value text-dark d-flex align-items-baseline gap-2">
+                                    <span th:text="${stats.longestStreak}">0</span>
+                                    <span class="fs-6 text-muted fw-normal">days</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-trophy-fill fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="stat-meta mt-2">
+                            <span class="text-muted">Personal Best Record</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-title">Total Active Days</div>
+                                <div class="stat-value text-dark d-flex align-items-baseline gap-2">
+                                    <span th:text="${stats.totalActiveDays}">0</span>
+                                    <span class="fs-6 text-muted fw-normal">days</span>
+                                </div>
+                            </div>
+                            <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-calendar-check-fill fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="stat-meta mt-2">
+                            <span class="text-muted">Distinct Dates with Logged Actions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GitHub-Style Contribution Heatmap Card -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="fw-bold">
+                        <i class="bi bi-grid-3x3-gap-fill me-2 text-success"></i>Contribution Heatmap (Last 16 Weeks)
+                    </div>
+                    <div class="d-flex align-items-center gap-1 small text-muted">
+                        <span>Less</span>
+                        <div class="heatmap-cell heatmap-level-0 d-inline-block"></div>
+                        <div class="heatmap-cell heatmap-level-1 d-inline-block"></div>
+                        <div class="heatmap-cell heatmap-level-2 d-inline-block"></div>
+                        <div class="heatmap-cell heatmap-level-3 d-inline-block"></div>
+                        <div class="heatmap-cell heatmap-level-4 d-inline-block"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="heatmap-container">
+                        <div id="streakHeatmapGrid" class="heatmap-grid">
+                            <!-- JavaScript dynamically populates 16 weeks of cells -->
+                        </div>
+                    </div>
+                    <div class="text-muted small mt-2">
+                        <i class="bi bi-info-circle me-1"></i>Hover over any square to inspect activity count for that date.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Rules & Guidelines Card -->
+            <div class="card">
+                <div class="card-header fw-bold">Streak Calculation Rules</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="d-flex gap-3">
+                                <div class="fs-3 text-primary"><i class="bi bi-check2-circle"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Meaningful Work Only</h6>
+                                    <p class="small text-muted mb-0">Solving DSA problems, completing learning goals, or committing project milestones count as active days.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex gap-3">
+                                <div class="fs-3 text-warning"><i class="bi bi-calendar-day"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Single Day Aggregation</h6>
+                                    <p class="small text-muted mb-0">Multiple activities recorded within the same day count toward that date without artificial inflation.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex gap-3">
+                                <div class="fs-3 text-success"><i class="bi bi-database-check"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Audit-Backed Accuracy</h6>
+                                    <p class="small text-muted mb-0">Streaks are never stored as arbitrary counters; they are dynamically derived from actual audit records in MySQL.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+    <script th:src="@{/js/streak-heatmap.js}"></script>
+</body>
+</html>

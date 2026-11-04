@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments :: head('Learning Goal')}"></head>
+<body>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/fragments :: sidebar('goals')}"></div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav th:replace="~{layout/fragments :: navbar('Learning Goal')}"></nav>
+
+        <!-- Body Content -->
+        <main class="content-body">
+            <!-- Flash Alerts -->
+            <div th:replace="~{layout/fragments :: alerts}"></div>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1" th:text="${isEdit ? 'Edit Learning Goal' : 'Create New Learning Goal'}">Goal</h3>
+                            <p class="text-muted mb-0">Define specific milestones and target completion dates.</p>
+                        </div>
+                        <a href="/goals" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back to Goals</a>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <form th:action="${isEdit ? '/goals/edit/' + goal.id : '/goals'}" th:object="${goal}" method="post">
+
+                                <!-- Title -->
+                                <div class="mb-3">
+                                    <label for="title" class="form-label fw-semibold">Goal Title <span class="text-danger">*</span></label>
+                                    <input type="text" id="title" th:field="*{title}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., Master Spring Boot 4 Virtual Threads &amp; Security">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title is required</div>
+                                </div>
+
+                                <!-- Category & Status -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label for="category" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+                                        <select id="category" th:field="*{category}" class="form-select"
+                                                th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''">
+                                            <option value="">Select a Category</option>
+                                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">Category is required</div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="status" class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                                        <select id="status" th:field="*{status}" class="form-select">
+                                            <option th:each="st : ${statuses}" th:value="${st}" th:text="${st.displayName}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Target Date -->
+                                <div class="mb-3">
+                                    <label for="targetDate" class="form-label fw-semibold">Target Completion Date</label>
+                                    <input type="date" id="targetDate" th:field="*{targetDate}" class="form-control">
+                                    <div class="form-text">Set an achievable target to keep your momentum high.</div>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-4">
+                                    <label for="description" class="form-label fw-semibold">Description &amp; Action Plan</label>
+                                    <textarea id="description" th:field="*{description}" class="form-control" rows="4"
+                                              placeholder="Break down what resources, topics, or benchmarks you will use to achieve this goal..."></textarea>
+                                </div>
+
+                                <!-- Submit Buttons -->
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="/goals" class="btn btn-outline-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary px-4" th:text="${isEdit ? 'Save Changes' : 'Create Goal'}">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer th:replace="~{layout/fragments :: footer}"></footer>
+    </div>
+
+    <!-- Scripts -->
+    <div th:replace="~{layout/fragments :: scripts}"></div>
+</body>
+</html>

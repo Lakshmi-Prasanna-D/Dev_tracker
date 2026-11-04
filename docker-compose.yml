@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # MySQL 8.0 Database Service
+  # ============================================================================
+  devtrack-db:
+    image: mysql:8.0
+    container_name: devtrack-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: devtrack_db
+      MYSQL_USER: devtrack_user
+      MYSQL_PASSWORD: devtrack_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - devtrack-db-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    networks:
+      - devtrack-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "devtrack_user", "-pdevtrack_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ============================================================================
+  # DevTrack Spring Boot Web Application
+  # ============================================================================
+  devtrack-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devtrack-app
+    restart: always
+    depends_on:
+      devtrack-db:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://devtrack-db:3306/devtrack_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: devtrack_user
+      SPRING_DATASOURCE_PASSWORD: devtrack_password
+    networks:
+      - devtrack-network
+
+volumes:
+  devtrack-db-data:
+    driver: local
+
+networks:
+  devtrack-network:
+    driver: bridge
